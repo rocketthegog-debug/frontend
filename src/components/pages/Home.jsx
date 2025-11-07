@@ -71,17 +71,10 @@ function Home({ user, setActiveTab, walletBalance, refreshWalletBalance }) {
         }
 
         loadMatches()
-        // Refresh every 10 seconds (frontend reads from cache, so frequent refresh is fine)
-        const interval = setInterval(loadMatches, 10 * 1000)
+        // Refresh every 30 seconds (frontend reads from cache, so moderate refresh is fine)
+        const interval = setInterval(loadMatches, 30 * 1000)
         return () => clearInterval(interval)
     }, [])
-
-    // Fetch user transactions
-    useEffect(() => {
-        if (user?.phone) {
-            loadTransactions()
-        }
-    }, [user])
 
     const loadTransactions = async () => {
         if (!user?.phone) return
@@ -99,6 +92,13 @@ function Home({ user, setActiveTab, walletBalance, refreshWalletBalance }) {
             setLoadingTransactions(false)
         }
     }
+
+    // Fetch user transactions
+    useEffect(() => {
+        if (user?.phone) {
+            loadTransactions()
+        }
+    }, [user?.phone])
 
     // Format date for display
     const formatDate = (dateString) => {

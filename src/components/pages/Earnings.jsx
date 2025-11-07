@@ -85,22 +85,22 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
         }
     }, [cooldown.active, cooldown.remaining, loadClickStats])
 
-    // Periodically sync cooldown with database (every 30 seconds)
+    // Periodically sync cooldown with database (every 60 seconds when active)
     useEffect(() => {
         if (user?.phone && cooldown.active) {
             const syncInterval = setInterval(() => {
                 loadClickStats()
-            }, 30000) // Sync every 30 seconds
+            }, 60000) // Sync every 60 seconds to reduce API calls
             return () => clearInterval(syncInterval)
         }
-    }, [user, cooldown.active, loadClickStats])
+    }, [user?.phone, cooldown.active, loadClickStats])
 
     useEffect(() => {
         if (user?.phone) {
             loadEarnings()
             loadClickStats()
         }
-    }, [user, loadClickStats])
+    }, [user?.phone, loadEarnings, loadClickStats])
 
     const showAlert = (type, message) => {
         setAlert({ isOpen: true, type, message })
@@ -173,7 +173,7 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
         }
     }
 
-    const loadEarnings = async () => {
+    const loadEarnings = useCallback(async () => {
         if (!user?.phone) return
         try {
             setLoading(true)
@@ -201,7 +201,7 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
         } finally {
             setLoading(false)
         }
-    }
+    }, [user?.phone])
 
     const formatDate = (dateString) => {
         try {

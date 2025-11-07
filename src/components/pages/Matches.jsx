@@ -60,8 +60,8 @@ function Matches({ user, setActiveTab }) {
         }
 
         loadMatches()
-        // Refresh every 10 seconds (frontend reads from cache, so frequent refresh is fine)
-        const interval = setInterval(loadMatches, 10 * 1000)
+        // Refresh every 30 seconds (frontend reads from cache, so moderate refresh is fine)
+        const interval = setInterval(loadMatches, 30 * 1000)
         return () => clearInterval(interval)
     }, [])
 
