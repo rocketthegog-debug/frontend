@@ -28,6 +28,36 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
     const [cooldown, setCooldown] = useState({ active: false, remaining: 0, minutes: 0 })
     const [consecutiveClicks, setConsecutiveClicks] = useState(0)
 
+    const loadEarnings = useCallback(async () => {
+        if (!user?.phone) return
+        try {
+            setLoading(true)
+            
+            // Get earnings summary from backend
+            const summaryResponse = await getEarningsSummary(user.phone)
+            
+            if (summaryResponse.success) {
+                setEarnings({
+                    total: summaryResponse.data.total || 0,
+                    today: summaryResponse.data.today || 0,
+                    thisWeek: summaryResponse.data.thisWeek || 0,
+                    thisMonth: summaryResponse.data.thisMonth || 0,
+                })
+            }
+
+            // Get recent earnings history (limit to 10, always show 'all')
+            const historyResponse = await getEarningsHistory(user.phone, 'all', 10)
+            
+            if (historyResponse.success) {
+                setTransactions(historyResponse.data || [])
+            }
+        } catch (error) {
+            console.error('Error loading earnings:', error)
+        } finally {
+            setLoading(false)
+        }
+    }, [user?.phone])
+
     const loadClickStats = useCallback(async () => {
         if (!user?.phone) return
         try {
@@ -172,36 +202,6 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
             setEarning(false)
         }
     }
-
-    const loadEarnings = useCallback(async () => {
-        if (!user?.phone) return
-        try {
-            setLoading(true)
-            
-            // Get earnings summary from backend
-            const summaryResponse = await getEarningsSummary(user.phone)
-            
-            if (summaryResponse.success) {
-                setEarnings({
-                    total: summaryResponse.data.total || 0,
-                    today: summaryResponse.data.today || 0,
-                    thisWeek: summaryResponse.data.thisWeek || 0,
-                    thisMonth: summaryResponse.data.thisMonth || 0,
-                })
-            }
-
-            // Get recent earnings history (limit to 10, always show 'all')
-            const historyResponse = await getEarningsHistory(user.phone, 'all', 10)
-            
-            if (historyResponse.success) {
-                setTransactions(historyResponse.data || [])
-            }
-        } catch (error) {
-            console.error('Error loading earnings:', error)
-        } finally {
-            setLoading(false)
-        }
-    }, [user?.phone])
 
     const formatDate = (dateString) => {
         try {
