@@ -57,23 +57,45 @@ function CricketMatchCard({ match, isLive = false }) {
   let score1 = null
   let score2 = null
   
+  // Helper to normalize team names for matching
+  const normalizeTeamName = (name) => {
+    if (!name) return ''
+    return name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')
+  }
+  
+  const team1Normalized = normalizeTeamName(team1)
+  const team2Normalized = normalizeTeamName(team2)
+  const teamsArray = match.teams || []
+  const team1FromArray = teamsArray[0] ? normalizeTeamName(teamsArray[0]) : ''
+  const team2FromArray = teamsArray[1] ? normalizeTeamName(teamsArray[1]) : ''
+  
   // Handle cricapi.com score format: score array with { r: runs, w: wickets, o: overs, inning: "..." }
   if (match.score && Array.isArray(match.score) && match.score.length > 0) {
     // Match scores to teams based on inning name or order
     match.score.forEach((scoreObj, index) => {
-      if (scoreObj.r !== undefined) {
-        const scoreStr = `${scoreObj.r}/${scoreObj.w || 0}`
+      if (scoreObj.r !== undefined || scoreObj.runs !== undefined) {
+        const runs = scoreObj.r !== undefined ? scoreObj.r : scoreObj.runs
+        const wickets = scoreObj.w !== undefined ? scoreObj.w : (scoreObj.wickets || 0)
+        const scoreStr = `${runs}/${wickets}`
+        
         // Try to match by inning name
         if (scoreObj.inning) {
-          const inningLower = scoreObj.inning.toLowerCase()
-          if (inningLower.includes(team1.toLowerCase()) || inningLower.includes(match.teams?.[0]?.toLowerCase())) {
+          const inningLower = normalizeTeamName(scoreObj.inning)
+          // Check if inning contains team name
+          if (inningLower.includes(team1Normalized) || 
+              (team1FromArray && inningLower.includes(team1FromArray)) ||
+              inningLower.includes(team1.split(' ')[0]?.toLowerCase() || '')) {
             score1 = scoreStr
-          } else if (inningLower.includes(team2.toLowerCase()) || inningLower.includes(match.teams?.[1]?.toLowerCase())) {
+          } else if (inningLower.includes(team2Normalized) || 
+                     (team2FromArray && inningLower.includes(team2FromArray)) ||
+                     inningLower.includes(team2.split(' ')[0]?.toLowerCase() || '')) {
             score2 = scoreStr
           } else {
-            // Fallback to order
-            if (index === 0) score1 = scoreStr
-            else if (index === 1) score2 = scoreStr
+            // Fallback to order if no match found
+            if (index === 0 && !score1) score1 = scoreStr
+            else if (index === 1 && !score2) score2 = scoreStr
+            else if (index === 0 && score1) score2 = scoreStr // If first score already assigned, second goes to team2
+            else if (index === 1 && score2) score1 = scoreStr // If second score already assigned, first goes to team1
           }
         } else {
           // No inning info, use order
@@ -96,10 +118,23 @@ function CricketMatchCard({ match, isLive = false }) {
     if (!score2) score2 = match.scores[1]
   }
   
+  // Try to extract from score string format
+  if (!score1 && !score2 && match.score && typeof match.score === 'string') {
+    const scores = match.score.split(' vs ').map(s => s.trim())
+    if (scores.length >= 2) {
+      score1 = scores[0]
+      score2 = scores[1]
+    }
+  }
+  
   // Format score display
   const formatScore = (score) => {
     if (!score) return null
-    if (typeof score === 'string') return score
+    if (typeof score === 'string') {
+      // If it's already formatted, return as is
+      if (score.includes('/')) return score
+      return score
+    }
     if (typeof score === 'object' && score.r !== undefined) {
       return `${score.r}/${score.w || 0}`
     }
@@ -184,9 +219,20 @@ function CricketMatchCard({ match, isLive = false }) {
           {score1 ? (
             <div className='text-right flex-shrink-0 ml-2'>
               <span className='text-sm font-bold text-gray-900'>{score1}</span>
-              {match.score?.[0]?.o && (
-                <span className='text-xs text-gray-500 ml-1'>({match.score[0].o} ov)</span>
-              )}
+              {(() => {
+                // Find the correct score object for team1
+                const team1ScoreObj = match.score?.find((s, idx) => {
+                  if (s.inning) {
+                    const inningLower = normalizeTeamName(s.inning)
+                    return inningLower.includes(team1Normalized) || 
+                           (team1FromArray && inningLower.includes(team1FromArray))
+                  }
+                  return idx === 0
+                }) || match.score?.[0]
+                return team1ScoreObj?.o ? (
+                  <span className='text-xs text-gray-500 ml-1'>({team1ScoreObj.o} ov)</span>
+                ) : null
+              })()}
             </div>
           ) : (isLive || match.matchStarted) && (
             <span className='text-xs text-gray-400 italic flex-shrink-0 ml-2'>Yet to bat</span>
@@ -224,9 +270,20 @@ function CricketMatchCard({ match, isLive = false }) {
           {score2 ? (
             <div className='text-right flex-shrink-0 ml-2'>
               <span className='text-sm font-bold text-gray-900'>{score2}</span>
-              {match.score?.[1]?.o && (
-                <span className='text-xs text-gray-500 ml-1'>({match.score[1].o} ov)</span>
-              )}
+              {(() => {
+                // Find the correct score object for team2
+                const team2ScoreObj = match.score?.find((s, idx) => {
+                  if (s.inning) {
+                    const inningLower = normalizeTeamName(s.inning)
+                    return inningLower.includes(team2Normalized) || 
+                           (team2FromArray && inningLower.includes(team2FromArray))
+                  }
+                  return idx === 1
+                }) || match.score?.[1]
+                return team2ScoreObj?.o ? (
+                  <span className='text-xs text-gray-500 ml-1'>({team2ScoreObj.o} ov)</span>
+                ) : null
+              })()}
             </div>
           ) : (isLive || match.matchStarted) && (
             <span className='text-xs text-gray-400 italic flex-shrink-0 ml-2'>Yet to bat</span>
