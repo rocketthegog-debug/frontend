@@ -201,6 +201,17 @@ function AdminDashboard({ user, setActiveTab, onLogout }) {
                                 </div>
                                 <IoChevronForwardOutline className='text-sm' />
                             </button>
+                            
+                            <button
+                                onClick={() => setActiveTab('admin-loss-tracking')}
+                                className='w-full flex items-center justify-between bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 p-3 rounded-lg transition-all text-xs font-semibold text-red-700 active:scale-98'
+                            >
+                                <div className='flex items-center gap-2'>
+                                    <IoStatsChartOutline className='text-base' />
+                                    <span>Loss Tracking</span>
+                                </div>
+                                <IoChevronForwardOutline className='text-sm' />
+                            </button>
                         </div>
                     </div>
                 </>

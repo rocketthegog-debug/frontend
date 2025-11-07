@@ -428,3 +428,14 @@ export const getPaymentMethodAdmin = async (userId) => {
   }
 }
 
+export const getLossTracking = async (adminUserId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/loss-tracking?adminUserId=${adminUserId}`)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching loss tracking:', error)
+    return { success: false, message: 'Failed to fetch loss tracking' }
+  }
+}
+

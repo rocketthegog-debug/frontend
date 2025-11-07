@@ -159,12 +159,12 @@ function ReferAndEarn({ user, setActiveTab, onBack }) {
                         <div className='bg-red-50 border border-red-200 rounded-lg p-6'>
                             <p className='text-sm font-semibold text-red-700 mb-2'>Referral Program Inactive</p>
                             <p className='text-xs text-red-600 mb-4'>The referral program is currently disabled. Please check back later.</p>
-                            <button
-                                onClick={loadReferralData}
+                        <button
+                            onClick={loadReferralData}
                                 className='bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-purple-700 transition-colors'
-                            >
+                        >
                                 Refresh
-                            </button>
+                        </button>
                         </div>
                     </div>
                 )}

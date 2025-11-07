@@ -202,25 +202,25 @@ function Order({ user, setActiveTab }) {
             {/* Packages */}
             <div className='mb-3'>
                 <h3 className='text-sm font-bold text-crickbuzz-text mb-2'>Available Packages</h3>
-                <div className='space-y-2'>
-                    {packages.map((pkg) => (
-                        <div key={pkg.id} className='bg-crickbuzz-light rounded-lg p-3'>
-                            <div className='flex justify-between items-start'>
-                                <div className='flex-1'>
-                                    <h3 className='text-sm font-semibold text-crickbuzz-text'>{pkg.name}</h3>
-                                    <p className='text-xs text-crickbuzz-text-light mt-0.5'>{pkg.description}</p>
-                                    <p className='text-crickbuzz-green font-bold text-base mt-2'>{APP_CONFIG.currency}{pkg.price}</p>
-                                </div>
+            <div className='space-y-2'>
+                {packages.map((pkg) => (
+                    <div key={pkg.id} className='bg-crickbuzz-light rounded-lg p-3'>
+                        <div className='flex justify-between items-start'>
+                            <div className='flex-1'>
+                                <h3 className='text-sm font-semibold text-crickbuzz-text'>{pkg.name}</h3>
+                                <p className='text-xs text-crickbuzz-text-light mt-0.5'>{pkg.description}</p>
+                                <p className='text-crickbuzz-green font-bold text-base mt-2'>{APP_CONFIG.currency}{pkg.price}</p>
+                            </div>
                                 <button 
                                     onClick={() => handleBuyPackage(pkg)}
                                     className='bg-crickbuzz-green text-white font-semibold py-1.5 px-4 rounded-lg hover:bg-crickbuzz-green-dark transition-colors text-xs ml-2'
                                 >
-                                    Buy
-                                </button>
-                            </div>
+                                Buy
+                            </button>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
+            </div>
             </div>
 
             {/* Alert Component */}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { APP_CONFIG } from '../../config'
-import { createWithdrawal } from '../../services/api'
+import { createWithdrawal, getPaymentMethod, getWalletBalance } from '../../services/api'
 import { IoWalletOutline } from 'react-icons/io5'
 import Alert from '../Alert'
 
@@ -10,6 +10,7 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [alert, setAlert] = useState({ isOpen: false, type: 'info', message: '' })
+    const [checkingBank, setCheckingBank] = useState(true)
 
     const showAlert = (type, message) => {
         setAlert({ isOpen: true, type, message })
@@ -33,9 +34,9 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
                     return
                 }
                 
-                // Check if sufficient balance
-                if (numValue > walletBalance) {
-                    setError('Insufficient balance')
+                // Check if sufficient withdrawable balance (only from recharges, not earnings)
+                if (numValue > withdrawableBalance) {
+                    setError(`Insufficient withdrawable balance. You can withdraw up to ${APP_CONFIG.currency}${withdrawableBalance} (from recharges only). Earnings cannot be withdrawn.`)
                     return
                 }
                 
@@ -62,8 +63,9 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
             return
         }
         
-        if (numAmount > walletBalance) {
-            setError('Insufficient balance')
+        // Strict validation: amount must be <= withdrawableBalance (only from recharges)
+        if (numAmount > withdrawableBalance) {
+            setError(`Insufficient withdrawable balance. You can withdraw up to ${APP_CONFIG.currency}${withdrawableBalance} (from recharges only). Earnings cannot be withdrawn.`)
             return
         }
         
@@ -77,10 +79,23 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
             return
         }
 
+        // Check if bank account is added
         try {
             setLoading(true)
             setError('')
             setSuccess(false)
+
+            const paymentMethodResponse = await getPaymentMethod(user.phone)
+            
+            if (!paymentMethodResponse.success || !paymentMethodResponse.data) {
+                showAlert('error', 'Please add your bank account details before withdrawing.')
+                setLoading(false)
+                // Navigate to payment methods page
+                if (setActiveTab) {
+                    setActiveTab('payment-methods')
+                }
+                return
+            }
 
             // Create withdrawal request in backend with "processing" status
             const response = await createWithdrawal(user.phone, numAmount)
@@ -106,11 +121,44 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
         }
     }
 
-    // Redirect to login if not logged in
+    // Check if bank account is added and load withdrawable balance on mount
     useEffect(() => {
-        if (!user && setActiveTab) {
-            setActiveTab('account')
+        const checkBankAccountAndBalance = async () => {
+            if (!user?.phone) {
+                if (setActiveTab) {
+                    setActiveTab('account')
+                }
+                return
+            }
+
+            try {
+                setCheckingBank(true)
+                
+                // Check bank account
+                const paymentMethodResponse = await getPaymentMethod(user.phone)
+                
+                if (!paymentMethodResponse.success || !paymentMethodResponse.data) {
+                    // No bank account added, navigate to payment methods
+                    showAlert('error', 'Please add your bank account details before withdrawing.')
+                    if (setActiveTab) {
+                        setActiveTab('payment-methods')
+                    }
+                    return
+                }
+
+                // Load withdrawable balance (only from recharges, excluding earnings)
+                const balanceResponse = await getWalletBalance(user.phone)
+                if (balanceResponse.success && balanceResponse.data) {
+                    setWithdrawableBalance(balanceResponse.data.withdrawableBalance || 0)
+                }
+            } catch (error) {
+                console.error('Error checking bank account and balance:', error)
+            } finally {
+                setCheckingBank(false)
+            }
         }
+
+        checkBankAccountAndBalance()
     }, [user, setActiveTab])
 
     // If not logged in, don't render anything (redirect will happen)
@@ -129,10 +177,17 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
                     <div className='flex items-center gap-2'>
                         <IoWalletOutline className='text-xl' />
                         <div>
-                            <p className='text-xs opacity-90 mb-0.5'>Available Balance</p>
+                            <p className='text-xs opacity-90 mb-0.5'>Total Balance</p>
                             <p className='text-xl font-bold'>{APP_CONFIG.currency} {walletBalance.toLocaleString()}</p>
                         </div>
                     </div>
+                </div>
+                <div className='mt-2 pt-2 border-t border-white/20'>
+                    <p className='text-xs opacity-90 mb-0.5'>Withdrawable Balance (from recharges only)</p>
+                    <p className='text-lg font-semibold'>{APP_CONFIG.currency} {withdrawableBalance.toLocaleString()}</p>
+                    {walletBalance > withdrawableBalance && (
+                        <p className='text-[10px] opacity-75 mt-1'>Note: Earnings cannot be withdrawn</p>
+                    )}
                 </div>
             </div>
 
@@ -163,6 +218,7 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
             <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4'>
                 <p className='text-xs font-semibold text-blue-900 mb-1'>Withdrawal Process:</p>
                 <ul className='text-xs text-blue-800 space-y-1 list-disc list-inside'>
+                    <li>18% GST will be deducted from withdrawal amount</li>
                     <li>Request will be reviewed by admin</li>
                     <li>Processing may take 24-48 hours</li>
                     <li>Funds will be deducted only after admin confirmation</li>
@@ -172,14 +228,14 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
             {/* Withdraw Button */}
             <button 
                 onClick={handleWithdraw}
-                disabled={loading || !amount || error !== '' || (amount && (parseInt(amount) < 100 || parseInt(amount) % 10 !== 0 || parseInt(amount) > walletBalance))}
+                disabled={loading || checkingBank || !amount || error !== '' || (amount && (parseInt(amount) < 100 || parseInt(amount) % 10 !== 0 || parseInt(amount) > withdrawableBalance))}
                 className={`w-full font-bold py-2.5 rounded-lg transition-colors text-sm ${
-                    loading || !amount || error !== '' || (amount && (parseInt(amount) < 100 || parseInt(amount) % 10 !== 0 || parseInt(amount) > walletBalance))
+                    loading || checkingBank || !amount || error !== '' || (amount && (parseInt(amount) < 100 || parseInt(amount) % 10 !== 0 || parseInt(amount) > withdrawableBalance))
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-amber-500 text-white hover:bg-amber-600'
                 }`}
             >
-                {loading ? 'Processing...' : `Withdraw ${APP_CONFIG.currency}${amount || '0'}`}
+                {checkingBank ? 'Checking...' : loading ? 'Processing...' : `Withdraw ${APP_CONFIG.currency}${amount || '0'}`}
             </button>
 
             {/* Alert Component */}

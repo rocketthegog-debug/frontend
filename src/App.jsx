@@ -18,6 +18,7 @@ import AdminWithdrawals from './components/pages/admin/Withdrawals'
 import AdminPayments from './components/pages/admin/Payments'
 import AdminUsers from './components/pages/admin/Users'
 import AdminReferralSettings from './components/pages/admin/ReferralSettings'
+import AdminLossTracking from './components/pages/admin/LossTracking'
 import { getWalletBalance } from './services/api'
 import Alert from './components/Alert'
 
@@ -166,6 +167,8 @@ function App() {
           return <AdminUsers user={user} onLogout={handleLogout} />
         case 'admin-referral-settings':
           return <AdminReferralSettings user={user} />
+        case 'admin-loss-tracking':
+          return <AdminLossTracking user={user} />
         default:
           return <AdminDashboard user={user} setActiveTab={setActiveTab} />
       }
