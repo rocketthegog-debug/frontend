@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { APP_CONFIG } from '../../config'
 import HeroCarousel from '../HeroCarousel'
 import { IoWalletOutline, IoAddCircleOutline, IoRemoveCircleOutline, IoArrowDownOutline, IoArrowUpOutline } from 'react-icons/io5'
-import { MdOutlineShoppingBag } from 'react-icons/md'
 import { fetchMatches, getUserTransactions, fetchMatchDetails } from '../../services/api'
 import CricketMatchCard from '../CricketMatchCard'
 import MatchDetailsModal from '../MatchDetailsModal'
@@ -167,10 +166,6 @@ function Home({ user, setActiveTab, walletBalance, refreshWalletBalance }) {
                 setLoadingDetails(false)
             }
         }
-    }
-
-    const handleOrderClick = (match) => {
-        setActiveTab('order')
     }
 
     const handleCloseModal = () => {
@@ -401,15 +396,6 @@ function Home({ user, setActiveTab, walletBalance, refreshWalletBalance }) {
                             </div>
                         )}
                     </div>
-
-                    {/* Quick Order Button */}
-                    <button
-                        onClick={() => setActiveTab('order')}
-                        className='w-full bg-crickbuzz-green text-white rounded-lg p-2.5 flex items-center justify-center gap-2 hover:bg-crickbuzz-green-dark transition-colors font-semibold text-xs mt-4'
-                    >
-                        <MdOutlineShoppingBag className='text-base' />
-                        <span>Browse Packages</span>
-                    </button>
                 </>
             ) : (
                 /* Welcome message when not logged in */
@@ -425,7 +411,6 @@ function Home({ user, setActiveTab, walletBalance, refreshWalletBalance }) {
                 matchDetails={matchDetails}
                 isOpen={!!selectedMatch}
                 onClose={handleCloseModal}
-                onOrderClick={handleOrderClick}
                 isLive={activeMatchTab === 'live'}
                 loadingDetails={loadingDetails}
             />

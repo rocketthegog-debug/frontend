@@ -11,7 +11,6 @@ import Account from './components/pages/Account'
 import Payment from './components/pages/Payment'
 import PaymentMethods from './components/pages/PaymentMethods'
 import MyOrders from './components/pages/MyOrders'
-import Order from './components/pages/Order'
 import ReferAndEarn from './components/pages/ReferAndEarn'
 import AdminDashboard from './components/pages/admin/Dashboard'
 import AdminWithdrawals from './components/pages/admin/Withdrawals'
@@ -126,7 +125,7 @@ function App() {
       useEffect(() => {
         if (!user && activeTab !== 'account') {
           // Only redirect if it's a protected page (not already on account/login)
-          const protectedTabs = ['home', 'matches', 'earnings', 'recharge', 'withdrawal', 'payment', 'payment-methods', 'my-orders', 'order', 'refer-and-earn', 'admin-dashboard', 'admin-withdrawals', 'admin-payments', 'admin-users', 'admin-referral-settings']
+          const protectedTabs = ['home', 'matches', 'earnings', 'recharge', 'withdrawal', 'payment', 'payment-methods', 'my-orders', 'refer-and-earn', 'admin-dashboard', 'admin-withdrawals', 'admin-payments', 'admin-users', 'admin-referral-settings']
           if (protectedTabs.includes(activeTab)) {
             setActiveTab('account')
           }
@@ -205,8 +204,6 @@ function App() {
         return <PaymentMethods user={user} setActiveTab={setActiveTab} onBack={() => setActiveTab('account')} />
       case 'my-orders':
         return <MyOrders user={user} setActiveTab={setActiveTab} onBack={() => setActiveTab('account')} />
-      case 'order':
-        return <Order user={user} setActiveTab={setActiveTab} />
       case 'refer-and-earn':
         return <ReferAndEarn user={user} setActiveTab={setActiveTab} onBack={() => setActiveTab('account')} />
       default:

@@ -43,7 +43,7 @@ const getCountryCode = (teamName) => {
   return null
 }
 
-function MatchDetailsModal({ match, matchDetails, isOpen, onClose, onOrderClick, isLive = false, loadingDetails = false }) {
+function MatchDetailsModal({ match, matchDetails, isOpen, onClose, isLive = false, loadingDetails = false }) {
   if (!isOpen || !match) return null
 
   const [maxWidth, setMaxWidth] = useState('100%')
@@ -876,17 +876,6 @@ function MatchDetailsModal({ match, matchDetails, isOpen, onClose, onOrderClick,
 
           {/* Footer Actions */}
           <div className='sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-16 flex gap-2 shadow-lg'>
-            {onOrderClick && (
-              <button
-                onClick={() => {
-                  onOrderClick(match)
-                  onClose()
-                }}
-                className='flex-1 bg-crickbuzz-green text-white py-2 px-3 rounded-lg hover:bg-crickbuzz-green-dark transition-colors text-xs font-semibold'
-              >
-                Order Package
-              </button>
-            )}
             <button
               onClick={onClose}
               className='flex-1 bg-gray-200 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-300 transition-colors text-xs font-semibold'
