@@ -1,0 +1,87 @@
+/* Tailwind CSS handles all styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Mobile App Container - 100% width on phones */
+.app-container {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: none;
+  overflow: hidden;
+  background: #ffffff;
+  max-width: 100%;
+}
+
+/* Tablets and Desktop - Fixed 420px width, centered */
+@media (min-width: 768px) {
+  .app-container {
+  width: 420px;
+    margin: 0 auto;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #10b981 #ffffff;
+}
+
+.app-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app-content::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.app-content::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 3px;
+}
+
+.app-content::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+/* Mobile: Full width, no gray background */
+body {
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Desktop/Tablet: Centered layout with gray background */
+@media (min-width: 768px) {
+  body {
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  #root {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}

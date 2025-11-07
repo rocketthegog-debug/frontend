@@ -1,0 +1,19 @@
+# Vercel deployment files
+.vercel
+.vercelignore
+
+# Environment files
+.env.local
+.env.production
+
+# Logs
+*.log
+server.log
+
+# Dependencies
+node_modules
+
+# Build files
+dist
+build
+
