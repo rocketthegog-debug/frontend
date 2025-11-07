@@ -26,18 +26,52 @@ function Matches({ user, setActiveTab }) {
                 setLoading(true)
                 setError(null)
                 const response = await fetchMatches()
+                
+                // Debug logging
+                console.log('🔍 Matches API Response:', {
+                    success: response.success,
+                    hasData: !!response.data,
+                    dataKeys: response.data ? Object.keys(response.data) : [],
+                    liveType: Array.isArray(response.data?.live) ? 'array' : typeof response.data?.live,
+                    liveLength: Array.isArray(response.data?.live) ? response.data.live.length : 'not array',
+                    upcomingType: Array.isArray(response.data?.upcoming) ? 'array' : typeof response.data?.upcoming,
+                    upcomingLength: Array.isArray(response.data?.upcoming) ? response.data.upcoming.length : 'not array',
+                    fullResponse: response
+                })
+                
                 if (response.success) {
-                    const liveMatches = Array.isArray(response.data?.live) 
-                        ? response.data.live 
-                        : Array.isArray(response.data?.live?.data) 
-                        ? response.data.live.data 
-                        : []
+                    // Handle different response structures
+                    let liveMatches = []
+                    let upcomingMatches = []
                     
-                    const upcomingMatches = Array.isArray(response.data?.upcoming) 
-                        ? response.data.upcoming 
-                        : Array.isArray(response.data?.upcoming?.data) 
-                        ? response.data.upcoming.data 
-                        : []
+                    // Extract live matches
+                    if (Array.isArray(response.data?.live)) {
+                        liveMatches = response.data.live
+                    } else if (Array.isArray(response.data?.live?.data)) {
+                        liveMatches = response.data.live.data
+                    } else if (Array.isArray(response.data?.live?.matches)) {
+                        liveMatches = response.data.live.matches
+                    } else if (Array.isArray(response.data?.live?.results)) {
+                        liveMatches = response.data.live.results
+                    }
+                    
+                    // Extract upcoming matches
+                    if (Array.isArray(response.data?.upcoming)) {
+                        upcomingMatches = response.data.upcoming
+                    } else if (Array.isArray(response.data?.upcoming?.data)) {
+                        upcomingMatches = response.data.upcoming.data
+                    } else if (Array.isArray(response.data?.upcoming?.matches)) {
+                        upcomingMatches = response.data.upcoming.matches
+                    } else if (Array.isArray(response.data?.upcoming?.results)) {
+                        upcomingMatches = response.data.upcoming.results
+                    }
+                    
+                    console.log('📊 Extracted Matches:', {
+                        liveCount: liveMatches.length,
+                        upcomingCount: upcomingMatches.length,
+                        firstLiveMatch: liveMatches[0] || null,
+                        firstUpcomingMatch: upcomingMatches[0] || null
+                    })
                     
                     setMatches({
                         live: liveMatches,
@@ -49,10 +83,11 @@ function Matches({ user, setActiveTab }) {
                         setError(response.message)
                     }
                 } else {
-                    setError('Failed to load matches')
+                    console.error('❌ API returned failure:', response)
+                    setError(response.message || 'Failed to load matches')
                 }
             } catch (err) {
-                console.error('Error loading matches:', err)
+                console.error('❌ Error loading matches:', err)
                 setError('Failed to load matches. Please try again.')
             } finally {
                 setLoading(false)

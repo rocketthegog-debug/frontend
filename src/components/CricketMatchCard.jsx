@@ -43,9 +43,27 @@ const getCountryCode = (teamName) => {
 }
 
 function CricketMatchCard({ match, isLive = false }) {
+  // Debug logging
+  if (!match) {
+    console.warn('⚠️ CricketMatchCard received null/undefined match')
+    return null
+  }
+  
   // Format team names (handle different API response formats)
   const team1 = match.team1 || match.teams?.[0] || match.teamInfo?.[0]?.name || 'Team 1'
   const team2 = match.team2 || match.teams?.[1] || match.teamInfo?.[1]?.name || 'Team 2'
+  
+  // Log match data for debugging
+  console.log('🎴 CricketMatchCard rendering:', {
+    matchId: match.id || match.matchId,
+    team1,
+    team2,
+    hasScore: !!match.score,
+    scoreArray: match.score,
+    matchStarted: match.matchStarted,
+    matchEnded: match.matchEnded,
+    status: match.status
+  })
   
   // Get team images/flags
   const team1Img = match.teamInfo?.[0]?.img || null

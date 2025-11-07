@@ -5,12 +5,34 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001
  */
 export const fetchMatches = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/cricket/matches`)
+    const url = `${API_BASE_URL}/cricket/matches`
+    console.log('🌐 Fetching matches from:', url)
+    
+    const response = await fetch(url)
+    
+    if (!response.ok) {
+      console.error('❌ API response not OK:', response.status, response.statusText)
+      return { success: false, data: { live: [], upcoming: [] }, error: `HTTP ${response.status}` }
+    }
+    
     const data = await response.json()
+    console.log('✅ API Response received:', {
+      success: data.success,
+      hasData: !!data.data,
+      dataStructure: data.data ? Object.keys(data.data) : [],
+      liveCount: Array.isArray(data.data?.live) ? data.data.live.length : 'not array',
+      upcomingCount: Array.isArray(data.data?.upcoming) ? data.data.upcoming.length : 'not array'
+    })
+    
     return data
   } catch (error) {
-    console.error('Error fetching matches:', error)
-    return { success: false, data: { live: [], upcoming: [] } }
+    console.error('❌ Error fetching matches:', error)
+    console.error('❌ Error details:', {
+      message: error.message,
+      stack: error.stack,
+      apiUrl: `${API_BASE_URL}/cricket/matches`
+    })
+    return { success: false, data: { live: [], upcoming: [] }, error: error.message }
   }
 }
 
