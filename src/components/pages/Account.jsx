@@ -23,29 +23,29 @@ function Account({ user, onLogin, onLogout, walletBalance, refreshWalletBalance,
     }
 
     useEffect(() => {
-        const loadReferralData = async () => {
+    const loadReferralData = async () => {
             // Check if user exists before accessing properties
             if (!user || !user.phone || user.isAdmin) {
                 setReferralData(null)
                 return
             }
             
-            try {
-                setLoadingReferral(true)
-                const response = await getReferralLink(user.phone)
+        try {
+            setLoadingReferral(true)
+            const response = await getReferralLink(user.phone)
                 if (response.success && response.data?.isActive) {
-                    setReferralData(response.data)
+                setReferralData(response.data)
                 } else {
                     // Program is inactive or failed to load
                     setReferralData(null)
-                }
-            } catch (error) {
-                console.error('Error loading referral data:', error)
-                setReferralData(null)
-            } finally {
-                setLoadingReferral(false)
             }
+        } catch (error) {
+            console.error('Error loading referral data:', error)
+                setReferralData(null)
+        } finally {
+            setLoadingReferral(false)
         }
+    }
 
         if (user && !user.isAdmin && user.phone) {
             loadReferralData()

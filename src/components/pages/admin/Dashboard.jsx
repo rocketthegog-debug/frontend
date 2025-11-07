@@ -104,7 +104,7 @@ function AdminDashboard({ user, setActiveTab, onLogout }) {
                             <div className='flex items-center gap-1 mt-2 text-xs opacity-80'>
                                 <span>View all</span>
                                 <IoChevronForwardOutline className='text-xs' />
-                            </div>
+                        </div>
                         </button>
                         
                         <button
@@ -121,7 +121,7 @@ function AdminDashboard({ user, setActiveTab, onLogout }) {
                             <div className='flex items-center gap-1 mt-2 text-xs opacity-80'>
                                 <span>View all</span>
                                 <IoChevronForwardOutline className='text-xs' />
-                            </div>
+                        </div>
                         </button>
                         
                         <button
@@ -139,7 +139,7 @@ function AdminDashboard({ user, setActiveTab, onLogout }) {
                                 <div className='flex items-center gap-1 mt-2 text-xs opacity-80'>
                                     <span>Review now</span>
                                     <IoChevronForwardOutline className='text-xs' />
-                                </div>
+                        </div>
                             )}
                         </button>
                         
@@ -196,7 +196,7 @@ function AdminDashboard({ user, setActiveTab, onLogout }) {
                                 className='w-full flex items-center justify-between bg-gradient-to-r from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200 p-3 rounded-lg transition-all text-xs font-semibold text-amber-700 active:scale-98'
                             >
                                 <div className='flex items-center gap-2'>
-                                    <HiOutlineGift className='text-base' />
+                                <HiOutlineGift className='text-base' />
                                     <span>Referral Settings</span>
                                 </div>
                                 <IoChevronForwardOutline className='text-sm' />

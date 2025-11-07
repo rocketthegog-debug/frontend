@@ -241,13 +241,13 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
                             <div className='flex items-center gap-2'>
                                 <div className='bg-white/20 rounded-full p-2'>
                                     <IoCashOutline className='text-white text-lg' />
-                                </div>
+                    </div>
                                 <div>
                                     <p className='text-xs text-white/90 font-medium'>Total Earnings</p>
                                     <p className='text-xl font-bold text-white'>{APP_CONFIG.currency} {earnings.total.toLocaleString()}</p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
@@ -279,7 +279,7 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
                             <>
                                 {clickStats.clicksRemaining > 0 ? (
                                     <>
-                                        <button
+                <button
                                             onClick={handleClickToEarn}
                                             disabled={earning || cooldown.active}
                                             className={`w-full bg-white text-crickbuzz-green py-2.5 px-4 rounded-lg font-bold text-sm shadow-md transition-all ${
@@ -294,7 +294,7 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
                                                     <span>Wait {Math.floor(cooldown.remaining / 60)}:{(cooldown.remaining % 60).toString().padStart(2, '0')}</span>
                                                 </span>
                                             ) : 'Earn Now'}
-                                        </button>
+                </button>
                                         
                                         {consecutiveClicks >= 4 && !cooldown.active && (
                                             <p className='text-[10px] text-white/70 text-center mt-2'>⚠️ {5 - consecutiveClicks} click(s) until cooldown</p>
@@ -314,45 +314,45 @@ function Earnings({ user, setActiveTab, refreshWalletBalance }) {
                             </div>
                         )}
                     </div>
-                </div>
+            </div>
 
                 {/* Earnings History */}
-                <div className='mb-2'>
+            <div className='mb-2'>
                     <p className='text-xs font-semibold text-crickbuzz-text mb-2'>Recent Earnings</p>
-                </div>
+            </div>
 
-                {loading ? (
+            {loading ? (
                     <div className='text-center py-6'>
                         <p className='text-xs text-crickbuzz-text-light'>Loading...</p>
-                    </div>
-                ) : transactions.length === 0 ? (
+                </div>
+            ) : transactions.length === 0 ? (
                     <div className='bg-crickbuzz-light rounded-lg p-6 text-center'>
                         <p className='text-xs text-crickbuzz-text-light'>No earnings yet</p>
-                    </div>
-                ) : (
+                </div>
+            ) : (
                     <div className='space-y-2 mb-4'>
                         {transactions.slice(0, 10).map((tx) => (
-                            <div key={tx._id} className='bg-crickbuzz-light rounded-lg p-3 border border-gray-200'>
+                        <div key={tx._id} className='bg-crickbuzz-light rounded-lg p-3 border border-gray-200'>
                                 <div className='flex items-center justify-between'>
-                                    <div className='flex items-center gap-2'>
-                                        <div className='bg-crickbuzz-green rounded-full p-1.5'>
-                                            <IoCashOutline className='text-white text-xs' />
-                                        </div>
-                                        <div>
+                                <div className='flex items-center gap-2'>
+                                    <div className='bg-crickbuzz-green rounded-full p-1.5'>
+                                        <IoCashOutline className='text-white text-xs' />
+                                    </div>
+                                    <div>
                                             <p className='text-xs font-semibold text-crickbuzz-text'>
                                                 {tx.paymentType === 'click-earn' ? 'Click Earn' : 'Order'}
                                             </p>
-                                            <p className='text-xs text-crickbuzz-text-light'>{formatDate(tx.createdAt)}</p>
-                                        </div>
+                                        <p className='text-xs text-crickbuzz-text-light'>{formatDate(tx.createdAt)}</p>
                                     </div>
-                                    <p className='text-sm font-bold text-crickbuzz-green'>
-                                        +{APP_CONFIG.currency}{tx.amount.toFixed(2)}
-                                    </p>
                                 </div>
+                                <p className='text-sm font-bold text-crickbuzz-green'>
+                                        +{APP_CONFIG.currency}{tx.amount.toFixed(2)}
+                                </p>
                             </div>
-                        ))}
-                    </div>
-                )}
+                        </div>
+                    ))}
+                </div>
+            )}
             </div>
 
             {/* Alert Component */}

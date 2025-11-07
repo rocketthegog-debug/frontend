@@ -495,20 +495,20 @@ function AdminUsers({ user, onLogout }) {
                                                 <IoTrashOutline className='text-base' />
                                             </button>
                                         </>
-                                    )}
+                                )}
                                 </div>
                             </div>
-
+                            
                             {/* Balance Row (only for non-admin) */}
                             {!usr.isAdmin && (
                                 <div className='flex items-center justify-between pt-2 border-t border-gray-100'>
                                     <div className='flex items-center gap-2'>
                                         <IoWalletOutline className='text-crickbuzz-green text-sm flex-shrink-0' />
-                                        <div>
+                                    <div>
                                             <p className='text-xs text-gray-500'>Balance</p>
                                             <p className='text-sm font-bold text-crickbuzz-green'>
                                                 {APP_CONFIG.currency} {usr.walletBalance?.toLocaleString() || 0}
-                                            </p>
+                                        </p>
                                         </div>
                                     </div>
                                     <div className='text-right'>
