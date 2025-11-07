@@ -11,6 +11,7 @@ function Withdrawal({ user, walletBalance, refreshWalletBalance, setActiveTab })
     const [success, setSuccess] = useState(false)
     const [alert, setAlert] = useState({ isOpen: false, type: 'info', message: '' })
     const [checkingBank, setCheckingBank] = useState(true)
+    const [withdrawableBalance, setWithdrawableBalance] = useState(0)
 
     const showAlert = (type, message) => {
         setAlert({ isOpen: true, type, message })
